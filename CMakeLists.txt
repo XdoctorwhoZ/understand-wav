@@ -8,3 +8,4 @@ add_executable(wav_write_test
 )
 
 
+target_link_libraries(wav_write_test PRIVATE m)

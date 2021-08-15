@@ -5,12 +5,12 @@
 
 
 int write_header(
-        FILE *file_p,
-        int32_t sampleRate,
-        int32_t frameCount,
-        int32_t num_channels,           // number of channels 1=mono, 2=stereo
-        int32_t bits_per_sample         // 8, 16, 32
-        );
+    uint8_t* buffer,
+    int32_t sampleRate,
+    int32_t frameCount,
+    int32_t num_channels,           // number of channels 1=mono, 2=stereo
+    int32_t bits_per_sample         // 8, 16, 32
+    );
 
 
 void generate_signal_sin(
