@@ -125,8 +125,16 @@ void generate_signal_sin(
     //
     if(bits_per_sample == 8)
     {
-        int8_t* data = buffer + sizeof(wavfile_header_t);
-        
+        int8_t* data = (int8_t*) (buffer + sizeof(wavfile_header_t));
+        for(int i=0; i<frame_count ; i++)
+        {
+            double val = sin( (double)((double)i*(double)SamplePeriod*(double)alpha) );
+            // left
+            int idx = i*num_channels;
+            data[idx] = (int8_t) (val * CHAR_MAX);
+            // right
+            data[idx+1] = (int8_t) (val * CHAR_MAX);
+        } 
     }
     else if(bits_per_sample == 16)
     {
@@ -134,16 +142,11 @@ void generate_signal_sin(
         for(int i=0; i<frame_count ; i++)
         {
             double val = sin( (double)((double)i*(double)SamplePeriod*(double)alpha) );
-            
-            // printf("v=%d\n", idx);
-
             // left
             int idx = i*num_channels;
             data[idx] = (int16_t) (val * SHRT_MAX);
             // right
             data[idx+1] = (int16_t) (val * SHRT_MAX);
-        
-            
         }
     }
     else if(bits_per_sample == 32)
