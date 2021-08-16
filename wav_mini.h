@@ -10,6 +10,7 @@
 
 // #define SAMPLE_RATE_44100     (44100)
 #define SAMPLE_RATE_11025       (11025)
+#define SAMPLE_RATE_16K         (16000)
 
 
 /*

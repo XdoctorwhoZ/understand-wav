@@ -57,6 +57,234 @@ int write_header(
 
 
 
+void generate_test_dual_pattern(
+    const char* filename,
+    int noHeader,
+    int32_t sample_rate,
+    int32_t num_channels,       // number of channels 1=mono, 2=stereo
+    int32_t bits_per_sample     // 8, 16, 32
+)
+{
+    FILE* file_p;
+    uint8_t* buffer;
+
+    // Open the wav file
+    file_p = fopen(filename, "wb");
+    if(NULL == file_p)
+    {
+        perror("fopen failed");
+        exit(1);
+    }
+
+    // number of sample per seconds * the number of seconds
+    int32_t frame_count = 512;
+
+    // sample size
+    int32_t sample_chan_size;
+    if(bits_per_sample == 8)
+    {
+        sample_chan_size = num_channels;
+    }
+    else if(bits_per_sample == 16)
+    {
+        sample_chan_size = num_channels * 2;
+    }
+    else if(bits_per_sample == 32)
+    {
+        sample_chan_size = num_channels * 4;
+    }
+
+    //
+    printf("frame_count         %d\n", frame_count);
+    printf("num_channels        %d\n", num_channels);
+    printf("sample_chan_size    %d\n", sample_chan_size);
+    int32_t filesize;
+    if(!noHeader)
+    {
+        filesize = sizeof(wavfile_header_t) + (frame_count * sample_chan_size);
+    }
+    else
+    {
+        filesize = (frame_count * sample_chan_size);
+    }
+    buffer = (uint8_t*) malloc( filesize );
+
+    //
+    if(!noHeader)
+    {
+        write_header(buffer, sample_rate, sample_rate, num_channels, bits_per_sample);
+    }
+
+
+    //
+    if(bits_per_sample == 8)
+    {
+        
+    }
+    else if(bits_per_sample == 16)
+    {
+
+        int16_t* data;
+        if(!noHeader)
+        {
+            data = (int16_t*) (buffer + sizeof(wavfile_header_t));
+        }
+        else
+        {
+            data = (int16_t*) (buffer);
+        }
+        
+
+        for(int i=0; i<frame_count ; i++)
+        {
+            // left
+            int idx = i*num_channels;
+
+            // printf("%3d %2x %4x\n", idx, up,   (((uint16_t)up) << 8) | 0x00FF  );
+
+            data[idx] = 0xFFFF;
+            data[idx+1] = 0x0000;
+        }
+    }
+    else if(bits_per_sample == 32)
+    {
+        sample_chan_size = num_channels * 4;
+    }
+
+
+    //
+    fwrite(buffer, filesize, 1, file_p);
+
+    //
+    free(buffer);
+    fclose(file_p);
+}
+
+
+
+
+
+void generate_test_rampe_pattern(
+    const char* filename,
+    int noHeader,
+    int onLSB,
+    int32_t sample_rate,
+    int32_t num_channels,       // number of channels 1=mono, 2=stereo
+    int32_t bits_per_sample     // 8, 16, 32
+)
+{
+    FILE* file_p;
+    uint8_t* buffer;
+
+    // Open the wav file
+    file_p = fopen(filename, "wb");
+    if(NULL == file_p)
+    {
+        perror("fopen failed");
+        exit(1);
+    }
+
+    // number of sample per seconds * the number of seconds
+    int32_t frame_count = 512;
+
+    // sample size
+    int32_t sample_chan_size;
+    if(bits_per_sample == 8)
+    {
+        sample_chan_size = num_channels;
+    }
+    else if(bits_per_sample == 16)
+    {
+        sample_chan_size = num_channels * 2;
+    }
+    else if(bits_per_sample == 32)
+    {
+        sample_chan_size = num_channels * 4;
+    }
+
+    //
+    printf("frame_count         %d\n", frame_count);
+    printf("num_channels        %d\n", num_channels);
+    printf("sample_chan_size    %d\n", sample_chan_size);
+    int32_t filesize;
+    if(!noHeader)
+    {
+        filesize = sizeof(wavfile_header_t) + (frame_count * sample_chan_size);
+    }
+    else
+    {
+        filesize = (frame_count * sample_chan_size);
+    }
+    buffer = (uint8_t*) malloc( filesize );
+
+    //
+    if(!noHeader)
+    {
+        write_header(buffer, sample_rate, sample_rate, num_channels, bits_per_sample);
+    }
+
+
+    //
+    if(bits_per_sample == 8)
+    {
+        
+    }
+    else if(bits_per_sample == 16)
+    {
+        uint8_t up = 0x00;
+        uint8_t down = 0xFF;
+
+        // 0x00ff 0xff00 | 0x01ff 0xFE00
+
+
+        int16_t* data;
+        if(!noHeader)
+        {
+            data = (int16_t*) (buffer + sizeof(wavfile_header_t));
+        }
+        else
+        {
+            data = (int16_t*) (buffer);
+        }
+        
+
+        for(int i=0; i<frame_count ; i++)
+        {
+            // left
+            int idx = i*num_channels;
+
+            if(onLSB)
+            {
+                // Increment on LSB
+                data[idx] = ((uint16_t)up);
+                data[idx+1] = ((uint16_t)down);
+            }
+            else
+            {
+                // Increment on MSB
+                data[idx] = (((uint16_t)up) << 8);
+                data[idx+1] = (((uint16_t)down) << 8);
+            }
+
+            up++;
+            down--;
+        }
+    }
+    else if(bits_per_sample == 32)
+    {
+        sample_chan_size = num_channels * 4;
+    }
+
+
+    //
+    fwrite(buffer, filesize, 1, file_p);
+
+    //
+    free(buffer);
+    fclose(file_p);
+}
+
+
 
 
 

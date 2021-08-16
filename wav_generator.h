@@ -13,6 +13,25 @@ int write_header(
     );
 
 
+void generate_test_dual_pattern(
+    const char* filename,
+    int noHeader,
+    int32_t sample_rate,
+    int32_t num_channels,       // number of channels 1=mono, 2=stereo
+    int32_t bits_per_sample     // 8, 16, 32
+);
+
+void generate_test_rampe_pattern(
+    const char* filename,
+    int noHeader,
+    int onLSB,
+    int32_t sample_rate,
+    int32_t num_channels,       // number of channels 1=mono, 2=stereo
+    int32_t bits_per_sample     // 8, 16, 32
+);
+
+
+
 void generate_signal_sin(
     const char* filename,
     double duration,            // seconds
