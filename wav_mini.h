@@ -31,10 +31,11 @@ typedef struct wavfile_header_s
     int16_t BlockAlign;     /*  2   */
     int16_t BitsPerSample;  /*  2   */
     
-    char    Subchunk2ID[4];
-    int32_t Subchunk2Size;
+    char    Subchunk2ID[4]; // 4
+    int32_t Subchunk2Size;  // 4
 }
 wavfile_header_t;
 
 
+int wav_decode_header(uint8_t* buffer, uint32_t buffer_size, struct wavfile_header_s** header, uint32_t* data_shift);
 
